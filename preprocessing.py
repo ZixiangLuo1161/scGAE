@@ -6,7 +6,7 @@ from utils import dopca
 import scanpy as sc
 from anndata import AnnData
 
-def get_adj(count, k=35, pca=50, mode="connectivity"):
+def get_adj(count, k=160, pca=30, mode="connectivity"):
     if pca:
         countp = dopca(count, dim=pca)
     else:

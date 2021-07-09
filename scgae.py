@@ -5,13 +5,17 @@ from spektral.layers import GraphAttention, GraphConvSkip, TAGConv
 from losses import dist_loss
 from tensorflow.keras.initializers import GlorotUniform
 from layers import *
+from preprocessing import *
+from utils import *
+from losses import *
+from clustering import *
 import tensorflow_probability as tfp
 import numpy as np
 
 
 class SCGAE(tf.keras.Model):
 
-    def __init__(self, X, adj, adj_n, hidden_dim=128, latent_dim=10, dec_dim=None, adj_dim=32,
+    def __init__(self, X, adj, adj_n, hidden_dim=120, latent_dim=15, dec_dim=None, adj_dim=32,
                  decA="DBL", layer_enc = "GAT"):
         super(SCGAE, self).__init__()
         if dec_dim is None:
@@ -67,7 +71,6 @@ class SCGAE(tf.keras.Model):
             self.decoderA = None
 
         # Expression matrix decoder
-
         decx_in = Input(shape=latent_dim)
         h = Dense(units=dec_dim[0], activation="relu")(decx_in)
         h = Dense(units=dec_dim[1], activation="relu")(h)
@@ -76,7 +79,7 @@ class SCGAE(tf.keras.Model):
         self.decoderX = Model(inputs=decx_in, outputs=decx_out, name="decoderX")
 
 
-    def pre_train(self, epochs=80, info_step=10, lr=2e-3, W_a=0.3, W_x=1,
+    def train(self, epochs=80, info_step=10, lr=2e-3, W_a=0.4, W_x=1,
                   W_d=0, min_dist=0.5, max_dist=20):
 
         optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
@@ -109,16 +112,16 @@ class SCGAE(tf.keras.Model):
                     print("Epoch", epoch, " X_rec_loss:", X_rec_loss.numpy(), "  A_rec_loss:", A_rec_loss.numpy())
         print("Pre_train Finish!")
 
-    def alt_train(self, epochs=100, lr=5e-4, W_a=0.3, W_x=1, W_c=1.5, info_step=8, n_update=8, centers=None):
+    def clustering_train(self, epochs=40, lr=5e-4, W_c=0.8, W_a=0.4, W_x=0.1, info_step=10, n_update=8, centers=None):
 
 
         self.cluster_model.get_layer(name='clustering').clusters = centers
 
         # Training
         optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
-        for epoch in range(0, epochs):
-
-
+        q = self.cluster_model([self.X, self.adj_n])
+        p = self.target_distribution(q)
+        for epoch in range(1, epochs+1):
             if epoch % n_update == 0:
                 q = self.cluster_model([self.X, self.adj_n])
                 p = self.target_distribution(q)
