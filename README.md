@@ -22,7 +22,7 @@ numpy --- 1.18.1
 pandas --- 1.0.1   
 tensorflow_probability --- 0.11.0  
 scikit-learn --- 0.22.1  
-scanpy --- 1.4.4  
+scanpy --- 1.8.0 
 anndata --- 0.7.4  
 spektral --- 0.6.1  
 matplotlib --- 3.0.3  
