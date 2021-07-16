@@ -1,6 +1,6 @@
 # scGAE
 We present the single-cell graph autoencoder (scGAE), a dimensionality reduction method that preserves topological structure in scRNA-seq data. scGAE builds a cell graph and uses a multitask-oriented graph autoencoder to preserve topological structure information and feature information in scRNA-seq data simultaneously.   
-See details in our paper: "scGAE: topology preserving dimensionality reduction for single cell RNA-seq data using graph autoencoder".  
+See details in our paper: "A topology-preserving dimensionality reduction method for single-cell RNA-seq data using graph autoencoder".  
    
 Quick start:  
 Download the model files (preprocessing.py, scgae.py, layers.py, losses.py, and utils.py) in this repository and import functions in them.  
