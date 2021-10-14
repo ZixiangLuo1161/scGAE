@@ -1,7 +1,7 @@
 from tensorflow.keras.models import Model
 from tensorflow.keras.losses import MSE, KLD
 from tensorflow.keras.layers import Dense, Dropout, Input, Lambda
-from spektral.layers import GraphAttention, GraphConvSkip, TAGConv
+from spektral.layers import GraphAttention, TAGConv
 from losses import dist_loss
 from tensorflow.keras.initializers import GlorotUniform
 from layers import *
@@ -37,10 +37,6 @@ class SCGAE(tf.keras.Model):
             A_in = Input(shape=self.n_sample)
             h = GraphAttention(channels=hidden_dim, attn_heads=1, kernel_initializer=initializer, activation="relu")([h, A_in])
             z_mean = GraphAttention(channels=latent_dim, kernel_initializer=initializer, attn_heads=1)([h, A_in])
-        elif layer_enc == "GCN":
-            A_in = Input(shape=self.n_sample)
-            h = GraphConvSkip(channels=hidden_dim,  kernel_initializer=initializer, activation="relu")([h, A_in])
-            z_mean = GraphConvSkip(channels=latent_dim, kernel_initializer=initializer)([h, A_in])
         elif layer_enc == "TAG":
             self.sparse = True
             A_in = Input(shape=self.n_sample, sparse=True)
